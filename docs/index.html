@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which pages should an SEO team review first? A click-through review queue, tested on unseen clients</title>
+<meta name="description" content="A transparent click-through rule and four machine-learning models, compared on clients they had never seen. What held up, what did not, and what a content reviewer can do with it.">
+<style>
+:root{
+  --ink:#1f2a37; --muted:#5b6675; --rule:#d9dee5; --surface:#f3f5f8; --paper:#ffffff;
+  --teal:#0e6e78; --ochre:#9a6a0a; --brick:#a23b33;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Avenir Next","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:1.125rem;line-height:1.62}
+a{color:var(--teal);text-underline-offset:3px}
+a:focus-visible,summary:focus-visible{outline:3px solid var(--teal);outline-offset:3px;border-radius:2px}
+.wrap{max-width:44rem;margin:0 auto;padding:0 1.25rem}
+.wide{max-width:60rem;margin:0 auto;padding:0 1.25rem}
+header.top{padding:3.5rem 0 2rem;border-bottom:1px solid var(--rule)}
+h1{font-family:var(--sans);font-weight:700;font-size:clamp(1.9rem,5.2vw,3rem);line-height:1.12;letter-spacing:-0.015em;margin:0 0 1.1rem}
+.standfirst{font-size:1.25rem;line-height:1.5;margin:0 0 1.2rem;color:var(--ink)}
+.byline{font-family:var(--sans);font-size:.95rem;color:var(--muted);margin:0}
+.byline span{display:block}
+.ledger{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:2.2rem 0 0}
+.ledger section{border-left:4px solid var(--teal);padding:.1rem 0 .1rem 1rem}
+.ledger section.no{border-left-color:var(--brick)}
+.ledger h2{font-family:var(--sans);font-size:1.05rem;margin:0 0 .5rem}
+.ledger ul{margin:0;padding-left:1.1rem;font-size:1rem;line-height:1.5}
+.ledger li{margin:.35rem 0}
+nav.toc{font-family:var(--sans);font-size:.98rem;padding:1.4rem 0;border-bottom:1px solid var(--rule)}
+nav.toc p{margin:0 0 .5rem;color:var(--muted)}
+nav.toc ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.35rem 1.25rem}
+main{padding-bottom:3rem}
+h2.sec{font-family:var(--sans);font-size:1.65rem;line-height:1.2;margin:3.2rem 0 1rem;letter-spacing:-0.01em;scroll-margin-top:1rem}
+h3{font-family:var(--sans);font-size:1.12rem;margin:2rem 0 .5rem}
+p{margin:0 0 1.05rem}
+ul.plain,ol.plain{padding-left:1.3rem;margin:0 0 1.2rem}
+ul.plain li,ol.plain li{margin:.45rem 0}
+.abstract{background:var(--surface);padding:1.1rem 1.25rem;border-left:4px solid var(--ochre);margin:0 0 1rem}
+.abstract p{margin:0}
+figure{margin:2rem 0;width:min(60rem,calc(100vw - 2.5rem));margin-left:50%;transform:translateX(-50%)}
+figure a{display:block}
+figure img{display:block;width:100%;height:auto;border:1px solid var(--rule);background:#fff}
+figcaption{font-family:var(--sans);font-size:.95rem;line-height:1.5;color:var(--ink);margin-top:.6rem}
+figcaption b{font-weight:700}
+.tablewrap{overflow-x:auto;margin:1.4rem 0;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:.93rem;min-width:34rem}
+caption{text-align:left;font-weight:700;padding:0 0 .5rem}
+th,td{padding:.5rem .6rem;border-bottom:1px solid var(--rule);text-align:right;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+thead th{border-bottom:2px solid var(--ink);font-weight:700}
+tr.rule td{background:#fbf5e8;font-weight:600}
+tr.base td{color:var(--muted);font-style:italic}
+.note{font-family:var(--sans);font-size:.9rem;color:var(--muted)}
+.callout{border-left:4px solid var(--brick);padding:.2rem 0 .2rem 1rem;margin:1.4rem 0}
+.rec{border-top:1px solid var(--rule);padding:1rem 0}
+.rec h3{margin:0 0 .4rem}
+.rec dl{margin:.4rem 0 0;font-size:1rem}
+.rec dt{font-family:var(--sans);font-weight:700;font-size:.92rem;float:left;clear:left;width:5.2rem}
+.rec dd{margin:0 0 .35rem 5.4rem}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--surface);padding:.05em .3em}
+footer{border-top:1px solid var(--rule);padding:2rem 0 3rem;font-family:var(--sans);font-size:.95rem;color:var(--muted)}
+@media (max-width:640px){
+  body{font-size:1.06rem}
+  .ledger{grid-template-columns:1fr}
+  header.top{padding-top:2rem}
+  .rec dt{float:none;width:auto}
+  .rec dd{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+ <div class="wide">
+  <div class="wrap" style="padding:0">
+   <h1>Which pages should an SEO team review first? A click-through review queue, tested on unseen clients</h1>
+   <p class="standfirst">A simple rule that flags pages earning far fewer clicks than their search position suggests picked out pages marked as declining in about 8 of every 10 of its top 50 picks, against a base rate of about 6 in 10. Four machine-learning models did not clearly beat it. A careless validation would have made the models look better than they are.</p>
+   <p class="byline"><span>Yassin</span><span>FlyRank ML Internship capstone</span><span>October 2026</span></p>
+  </div>
+  <div class="ledger">
+   <section>
+    <h2>What held up</h2>
+    <ul>
+     <li>Pages with a click-through rate (CTR) far below the norm for their position were marked "down" more often: 0.70 vs. 0.47 in positions 4 to 10.</li>
+     <li>On clients held out of training, about 41 of the rule's top 50 picks were marked "down" (precision@50 of 0.82), against a base rate of 0.60.</li>
+     <li>A deliberately planted leak pushed scores to about 1.0, so the test harness does detect leakage.</li>
+    </ul>
+   </section>
+   <section class="no">
+    <h2>What did not</h2>
+    <ul>
+     <li>A random split by page overstated the Random Forest's AUC: 0.709 vs. 0.616 on unseen clients.</li>
+     <li>On development clients no model clearly beat the rule, and staleness gave a mixed signal.</li>
+     <li>Nine of the rule's top ten pages show zero clicks in 90 days, which may be a measurement gap, not a title problem.</li>
+    </ul>
+   </section>
+  </div>
+ </div>
+</header>
+
+<div class="wrap">
+<nav class="toc" aria-label="Sections">
+ <p>Short on time? Read the abstract, the three figures, and the limitations.</p>
+ <ul>
+  <li><a href="#abstract">Abstract</a></li>
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#data">Data</a></li>
+  <li><a href="#methodology">Methodology</a></li>
+  <li><a href="#results">Results</a></li>
+  <li><a href="#limitations">Limitations</a></li>
+  <li><a href="#recommendations">Recommendations</a></li>
+  <li><a href="#reproducibility">Reproducibility</a></li>
+  <li><a href="#acknowledgments">Acknowledgments</a></li>
+ </ul>
+</nav>
+
+<main>
+
+<h2 class="sec" id="abstract">Abstract</h2>
+<div class="abstract">
+<p>When a content team can only review some of its pages, which ones should it open first? Using an anonymized slice of 12,023 pages from 28 clients (one 90-day snapshot), I built a transparent rule that ranks pages by how far their click-through rate falls below the typical rate for their search position, and compared it with four machine-learning models. Every comparison holds out whole clients, because a random split by page raised the Random Forest's AUC from 0.616 to 0.709 without any real gain. On development clients the rule's top 50 pages were marked "down" 82% of the time against a 60% base rate, and no model clearly beat it; on a small sealed set of six clients the models scored somewhat higher (AUC 0.66 to 0.68 vs. 0.58 for the rule). The results are observed associations with a proxy label, meant as decision-support for choosing which pages to review first, not as forecasts of decline or evidence that a rewrite would help.</p>
+</div>
+
+<h2 class="sec" id="introduction">Introduction</h2>
+<p>Picture a content reviewer with one afternoon and thousands of pages that get search impressions. They cannot open them all. The decision this work supports is simple: <em>which page do I open first?</em> A good answer sends the reviewer to pages where an action (rewriting a title and description, expanding the content, or leaving it alone) has a real chance of mattering.</p>
+<p>The obvious starting point is click-through rate. A page that appears high in the results but earns few clicks may have a weak title or snippet. That is a hypothesis, so I tested it before building anything: does a low CTR for a page's position go together with a page losing impressions? Only after that did I turn it into a rule, and only then did I ask whether a machine-learning model improves on the rule.</p>
+<p>The paper deliberately reports the rule, the models, and the checks that weakened my own first results, because the checks are what make the numbers usable.</p>
+
+<h2 class="sec" id="data">Data</h2>
+<p><b>Source.</b> A small anonymized slice of the FlyRank ML Internship dataset: 30,000 content pages from 32 clients, one row per page, with observed search and engagement metrics for a trailing 90-day window. Page and client identifiers are pseudonyms used only for grouping. The file has no client names, domains, URLs, page titles or search queries, and no product decision flags or scores.</p>
+<p><b>Window.</b> One snapshot of 90 days, with two comparison windows inside it (the last 30 days and the 30 days before). The file carries no calendar dates.</p>
+<p><b>Analysis slice.</b> I kept the 12,023 pages (from 28 clients) with at least 500 impressions, an average search position of 20 or better, and an age of at least 90 days. I excluded the rest for three reasons: pages with little demand have too few clicks for CTR to mean anything, pages ranked past position 20 are rarely a CTR problem, and a position of 0 in this data means "no data".</p>
+<p><b>The label is a proxy.</b> A page is marked "down" when its impressions in the last 30 days are more than 20% below the previous 30 days. This is a rule applied to the same snapshot, not an observed future outcome. In the slice, 59.9% of pages are marked "down". That base rate sits beside every score below.</p>
+
+<h2 class="sec" id="methodology">Methodology</h2>
+
+<h3>Signals checked before the rule</h3>
+<p>I checked two signals before writing any rule, and gave each a one-word verdict from a bucket table with its sample size.</p>
+<ul class="plain">
+ <li><b>CTR against position: confirmed.</b> Within position 4 to 10 (1,771 pages per quartile), the share marked "down" fell from 0.702 in the lowest-CTR quartile to 0.472 in the highest. Position 11 to 20 (about 1,115 pages per quartile) showed the same direction, 0.705 to 0.555. In position 1 to 3 there were only 120 pages per bucket, so I treat that band as weak support.</li>
+ <li><b>Staleness: mixed.</b> The 90 to 179 day band was slightly higher than the freshest (0.620 vs. 0.587), but the 30 to 89 day band was lower, and only 10 pages were older than 180 days. About 63% of pages had been updated within 30 days, so the data has little real staleness to learn from. Staleness has no weight in the rule.</li>
+</ul>
+
+<h3>The baseline rule</h3>
+<p>Each page gets a score equal to how far its CTR falls below the typical CTR for its position band (positions 1 to 3, 4 to 10, 11 to 20), as a share of that typical value, floored at zero. The typical value is the median CTR of pages in the same band, taken from training clients only when the rule is evaluated. Ties go to the page with more impressions. Output: a ranked queue with one reason code (<code>low_ctr_for_position</code>) and one action label (<code>fix_title_and_snippet</code>). Volume is a gate, not a weight, because I did not confirm that volume itself goes with decline. A first version that multiplied the CTR gap by impressions ("missed clicks") scored below the base rate, so I dropped it. Because I saw both results before choosing, the rule's numbers are slightly optimistic.</p>
+
+<h3>Models</h3>
+<p>Logistic regression, a depth-3 decision tree, a random forest and gradient boosting, with fixed settings and no tuning. They use 13 features: log impressions, average position, log CTR, content age, days since last update, days with impressions, log word count, log search volume, competition, cost per click, engagement rate, content type and search intent. Missing values get a median fill plus a "was missing" flag. A rule fixed in advance chose among models: the simplest one whose development AUC is within 0.005 of the best.</p>
+
+<h3>Validation</h3>
+<p>Whole clients are held out, never single pages, because pages from one client share a site, a topic mix and a tracking setup. About 20% of clients (6 clients, 1,364 pages) form a sealed test set evaluated once. The other 22 clients (10,659 pages) go through 5-fold grouped cross-validation, and the rule is recomputed on the same folds. I chose the sealed clients by a rule about design, not results: no single client may make up more than 40% of the sealed pages. Seeds 0 to 18 failed that rule (one client was most of the pages), so I used seed 19. I had seen results from the first, rejected split, and I say so. Metrics are precision@K (of the top K pages, the share marked "down") and ROC AUC.</p>
+
+<h3>Leakage checks</h3>
+<p>Label columns, the trend columns and the last-30 and previous-30-day columns are never features (checked in code). I planted one label-derived feature on purpose and watched the score. I tested a version that uses only features from the first 30 days, before the label window. And I looked at a feature that dominated the importance ranking, to see whether it was real signal or a side effect of how the label is built.</p>
+
+<h2 class="sec" id="results">Results</h2>
+
+<figure>
+ <a href="img/fig1-model-vs-baseline.png" title="Open the full-size chart"><img src="img/fig1-model-vs-baseline.png" alt="Bar chart of precision at 50 for the rule and four models on development folds and on six sealed clients, with the base rate as a dashed line." width="1971" height="817"></a>
+ <figcaption><b>On development clients no model clearly beat the rule.</b> Each model's mean is within one standard deviation of the rule's 0.82. On six sealed clients the learned models score higher, but a gap of 0.08 is four pages out of 50.</figcaption>
+</figure>
+
+<div class="tablewrap">
+<table>
+ <caption>Rule vs. models, same clients and same folds</caption>
+ <thead>
+  <tr><th rowspan="2">Method</th><th colspan="3">Development folds (22 clients)</th><th colspan="3">Sealed test (6 clients)</th></tr>
+  <tr><th>AUC</th><th>P@20</th><th>P@50</th><th>AUC</th><th>P@20</th><th>P@50</th></tr>
+ </thead>
+ <tbody>
+  <tr class="rule"><td>Rule (baseline)</td><td>0.593</td><td>0.83</td><td>0.82</td><td>0.582</td><td>0.75</td><td>0.82</td></tr>
+  <tr><td>Logistic regression</td><td>0.605</td><td>0.80</td><td>0.81</td><td>0.673</td><td>0.90</td><td>0.88</td></tr>
+  <tr><td>Decision tree (depth 3)</td><td>0.582</td><td>0.77</td><td>0.71</td><td>0.574</td><td>0.85</td><td>0.72</td></tr>
+  <tr><td>Random forest (chosen by the pre-set rule)</td><td>0.611</td><td>0.90</td><td>0.85</td><td>0.661</td><td>0.95</td><td>0.90</td></tr>
+  <tr><td>Gradient boosting</td><td>0.600</td><td>0.86</td><td>0.82</td><td>0.677</td><td>0.85</td><td>0.84</td></tr>
+  <tr class="base"><td>Base rate of "down" pages</td><td colspan="3">0.597</td><td colspan="3">0.609</td></tr>
+ </tbody>
+</table>
+</div>
+<p class="note">Development figures are means over 5 grouped folds (fold-to-fold standard deviation of P@50: 0.05 to 0.21; one fold is a single large client). P@K is the share of the top K pages that were marked "down".</p>
+<p>Read together, the tables say three things. The overall ordering of pages is only a little better than chance (AUC of about 0.6 for everything, rule included). The top of the list is much better than the base rate, and the simple rule gets most of that. And the learned models look better on the small sealed set than on the development folds, which is why I call the gain directional. A readable logistic regression scores as well as the random forest on the sealed clients (AUC 0.673 vs. 0.661), so complexity is not earning much here.</p>
+
+<figure>
+ <a href="img/fig2-random-vs-grouped.png" title="Open the full-size chart"><img src="img/fig2-random-vs-grouped.png" alt="Dot plot comparing ROC AUC under a random split and a client-grouped split for the random forest and logistic regression." width="1695" height="653"></a>
+ <figcaption><b>A random split flattered the models.</b> Holding out whole clients cut the Random Forest's AUC by 0.093 (0.709 to 0.616) and logistic regression's by 0.058. The drop is consistent with models picking up client habits.</figcaption>
+</figure>
+
+<h3>What the leakage checks found</h3>
+<figure>
+ <a href="img/fig3-leakage-audit.png" title="Open the full-size chart"><img src="img/fig3-leakage-audit.png" alt="Dot plot of ROC AUC for first-30-day features, 90-day features, and 90-day features plus a deliberately leaked trend column." width="1695" height="692"></a>
+ <figcaption><b>The planted leak lifted AUC to about 1.0, and the honest numbers are about 0.6.</b> Features from the first 30 days only scored AUC 0.58 to 0.59 and precision@50 of 0.70 to 0.74, lower than the 90-day versions. That version also loses three features that have no first-30-day form, so the gap mixes the overlap effect with those losses, and I cannot isolate the overlap.</figcaption>
+</figure>
+<p>One more check was on <code>days_with_impressions</code>, the feature the models lean on most. The share of pages marked "down" was 0.08 for pages with fewer than 30 active days (101 pages), 0.61 for 30 to 59 days (180 pages), 0.74 for 60 to 79 days (1,004 pages) and 0.59 for 80 days or more (10,738 pages). A page that only recently began earning impressions can look "up" by construction, and a page that fades late loses active days, so the feature is partly tied to how the label is built. I cannot separate real decline risk from that effect with this data.</p>
+
+<h3>What the errors look like</h3>
+<p>The highest-ranked pages that were <em>not</em> marked "down" were keyword articles with CTR between 0.00% and 0.15%, at positions between 2 and 17, with 596 to 2,032 impressions. A low CTR at positions 15 to 17 is common even for healthy pages, and a page at position 2 or 3 with zero clicks looks like a measurement gap. The declining pages the model scored lowest were large, with 88,000 to 149,000 impressions at positions 5 to 6 and ordinary CTR, so nothing in the static features warned of their drop. A label threshold also matters: a page that lost 19% counts as stable and one that lost 21% counts as "down".</p>
+<div class="callout">
+ <p><b>Zero-click pages.</b> About 10% of pages in the slice (1,215 of 12,023) show zero clicks in 90 days, and 9 of the rule's top 10 are among them. That may be a real title problem, but it may also be a tracking or indexing gap. A review queue that starts with these pages is partly a data-quality list.</p>
+</div>
+
+<h2 class="sec" id="limitations">Limitations and honest framing</h2>
+<p>These are the words I allow myself: <em>observed</em> for what the data shows, <em>measured</em> for a number with its comparison, <em>directional</em> for a gap too small to be sure of, and <em>decision-support</em> for a tool that sets review order. The work does not claim any of the following.</p>
+<ul class="plain">
+ <li><b>No causal claim.</b> The data is a single observational snapshot. Nothing here shows that rewriting a title or refreshing a page would reverse a decline, and nothing says anything about how Google ranks pages.</li>
+ <li><b>The label is a proxy.</b> "Down" is a threshold on the last 30 days against the 30 before, inside the same 90-day window as most features. It is not a forecast of future decline.</li>
+ <li><b>No time-aware split.</b> The file has no dates, so I could not train on the past and test on the future, which is the split that matches real use.</li>
+ <li><b>The overlap effect is not isolated.</b> The first-30-day test removed the overlap and three features together.</li>
+ <li><b>Uneven and small test sets.</b> There are 28 clients of very different sizes; one client alone fills a whole development fold, and the sealed test is 6 clients and 1,364 pages. I chose the sealed split by a balance rule after seeing a rejected first split.</li>
+ <li><b>Some picks may be measurement problems.</b> The zero-click pages above are a reminder that a metric gap can look like a content problem.</li>
+ <li><b>A small slice.</b> This is an anonymized starter slice, not the full warehouse. The numbers may not carry over to other clients, months or sites.</li>
+ <li><b>Untuned models.</b> I fixed model settings in advance to avoid fitting the folds, so a tuned model might do better or worse.</li>
+</ul>
+
+<h2 class="sec" id="recommendations">Ranked recommendations</h2>
+<p>An action playbook for a content team, in the order I would do things. Each is decision-support, not a promise of results.</p>
+
+<div class="rec">
+ <h3>Check measurement before rewriting anything</h3>
+ <dl>
+  <dt>Why</dt><dd>About 10% of pages with 500 or more impressions show exactly zero clicks, including most of the top of my queue.</dd>
+  <dt>How</dt><dd>List pages with many impressions and zero clicks. Check tracking, indexing and search-result features before touching copy.</dd>
+  <dt>Measure</dt><dd>The share still at zero clicks after the check.</dd>
+ </dl>
+</div>
+<div class="rec">
+ <h3>Review pages whose CTR is far below the norm for their position</h3>
+ <dl>
+  <dt>Why</dt><dd>In the signal check, the lowest-CTR quartile was marked "down" more often (0.70 vs. 0.47 in positions 4 to 10), and the rule's top 50 were marked "down" about 82% of the time.</dd>
+  <dt>How</dt><dd>Start with the highest-impression pages in the queue. Rewrite the title and description, and check the snippet.</dd>
+  <dt>Measure</dt><dd>CTR and impressions at 30 and 60 days, against similar pages that were not reviewed.</dd>
+ </dl>
+</div>
+<div class="rec">
+ <h3>Use a model as a second opinion within that list, not as a replacement</h3>
+ <dl>
+  <dt>Why</dt><dd>Models matched the rule on development clients and looked better only on six sealed clients (AUC 0.66 to 0.68 vs. 0.58).</dd>
+  <dt>How</dt><dd>Use a readable logistic regression to reorder pages inside the queue. Keep the rule as the explanation.</dd>
+  <dt>Measure</dt><dd>Precision@50 on a later period, on clients not used for fitting.</dd>
+ </dl>
+</div>
+<div class="rec">
+ <h3>Treat pages that only recently began earning impressions separately</h3>
+ <dl>
+  <dt>Why</dt><dd>Pages with few active days behave differently, and the effect is partly built into how "down" is defined.</dd>
+  <dt>How</dt><dd>Keep them out of the main queue, or review them on their own list.</dd>
+  <dt>Measure</dt><dd>Whether they stay in the queue after a full window of data.</dd>
+ </dl>
+</div>
+<div class="rec">
+ <h3>Do not rank by staleness alone in this data</h3>
+ <dl>
+  <dt>Why</dt><dd>The staleness signal was mixed and most pages were updated recently, so there was not enough contrast to learn from.</dd>
+  <dt>How</dt><dd>Revisit it where pages have a wider spread of update dates.</dd>
+  <dt>Measure</dt><dd>Decline rate by days since update with at least 100 pages per bucket.</dd>
+ </dl>
+</div>
+<div class="rec">
+ <h3>Build the measurement that would turn this into evidence</h3>
+ <dl>
+  <dt>Why</dt><dd>The proxy label and the missing dates limit what this study can say.</dd>
+  <dt>How</dt><dd>Use dated data, define the label on a future window, and keep a comparison group of unreviewed pages.</dd>
+  <dt>Measure</dt><dd>Precision@K against a baseline on a time-ordered split.</dd>
+ </dl>
+</div>
+
+<h2 class="sec" id="reproducibility">Reproducibility</h2>
+<p>Every number above comes from a notebook in the project repository, which also holds the aggregate metrics files for the baseline, the model comparison and the audit. The notebooks run in Google Colab from the repository and use fixed seeds.</p>
+<ul class="plain">
+ <li><a href="https://github.com/yelsebety/Yassin-Flyrank">Project repository</a></li>
+ <li><a href="https://github.com/yelsebety/Yassin-Flyrank/blob/main/work/notebooks/w01_research_question.ipynb">Research question and lane choice</a></li>
+ <li><a href="https://github.com/yelsebety/Yassin-Flyrank/blob/main/work/notebooks/w02_ml_task_framing.ipynb">Task framing and target</a></li>
+ <li><a href="https://github.com/yelsebety/Yassin-Flyrank/blob/main/work/notebooks/w03_data_contract.ipynb">Data contract and leakage trap</a></li>
+ <li><a href="https://github.com/yelsebety/Yassin-Flyrank/blob/main/work/notebooks/w04_baseline_score.ipynb">Signal checks and the baseline rule</a></li>
+ <li><a href="https://github.com/yelsebety/Yassin-Flyrank/blob/main/work/notebooks/w05_model.ipynb">Model against baseline, grouped validation</a></li>
+ <li><a href="https://github.com/yelsebety/Yassin-Flyrank/blob/main/work/notebooks/w06_validation_audit.ipynb">Validation and leakage audit, claim rewrite</a></li>
+</ul>
+<p class="note">Settings: seed 0 throughout; sealed-split seed 19 chosen by the balance rule above; random forest with 300 trees and a minimum leaf of 20; scikit-learn 1.8.0. Models use fixed settings and were not tuned. The anonymized starter slice used here ships with the repository; the figures and tables on this page are aggregates only.</p>
+
+<h2 class="sec" id="acknowledgments">Acknowledgments and data credit</h2>
+<p>Built on the <a href="https://flyrank.ai">FlyRank ML Internship dataset</a>. Thanks to the FlyRank team for the data and the program. The audit approach was inspired by the careful reading of FlyRank's own March 2026 research paper, <em>The State of AI-Driven SEO</em>, which labels its observational and exploratory pieces clearly.</p>
+
+</main>
+</div>
+
+<footer>
+ <div class="wrap">
+  <p>This page reports observed, measured and directional results intended as decision-support. It contains no client names, domains, URLs or private queries, and it makes no claim about how Google ranks pages or about the causal effect of a refresh.</p>
+ </div>
+</footer>
+
+</body>
+</html>
